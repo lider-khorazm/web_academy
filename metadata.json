@@ -1,0 +1,6 @@
+{
+  "name": "DevMaster Academy | Dasturlash Maktabi",
+  "description": "HTML, CSS va JavaScript bo'yicha 3 bosqichli ta'lim tizimi, ustozlar nazorati, 15 talabali guruhlar, ID orqali test topshirish va admin boshqaruvi.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

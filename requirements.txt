@@ -1,0 +1,2 @@
+# DevMaster Academy - Node.js React Application
+# Eslatma: Render sozlamalarida (Settings) Environment / Runtime ni 'Node' deb tanlang.

@@ -1,0 +1,326 @@
+/**
+ * Generates a complete, self-contained single-file HTML for the tanishuv (intro/dating) profile.
+ * Contains responsive CSS, interactive vanilla JS, and modern styling without external build tools.
+ */
+
+export interface ProfileData {
+  id: string;
+  name: string;
+  age: number;
+  city: string;
+  occupation: string;
+  bio: string;
+  interests: string[];
+  quote: string;
+  telegram: string;
+  instagram: string;
+  likes: number;
+  avatarUrl: string;
+  questions: {
+    question: string;
+    optionA: string;
+    optionB: string;
+    profileChoice: 'A' | 'B';
+  }[];
+}
+
+export function generateStandaloneHtml(profile: ProfileData): string {
+  const interestsHtml = profile.interests
+    .map(
+      (item) =>
+        `<span style="display:inline-block; font-size:13px; color:#44403c; background:#f5f5f4; border:1px solid #e7e5e4; padding:5px 12px; border-radius:8px; margin:3px;">${escapeHtml(item)}</span>`
+    )
+    .join('\n            ');
+
+  return `<!DOCTYPE html>
+<html lang="uz">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>${escapeHtml(profile.name)} - Tanishuv Sahifasi</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+      background: #fbf9f5;
+      color: #292524;
+      line-height: 1.5;
+      padding: 24px 16px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+    }
+    .card {
+      width: 100%;
+      max-width: 480px;
+      background: #ffffff;
+      border: 1px solid #e7e5e4;
+      border-radius: 20px;
+      box-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.05);
+      overflow: hidden;
+      margin: auto;
+    }
+    .header-banner {
+      height: 110px;
+      background: linear-gradient(135deg, #fce7f3 0%, #fef3c7 50%, #e0e7ff 100%);
+      position: relative;
+    }
+    .avatar-wrap {
+      padding: 0 24px;
+      margin-top: -50px;
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+    }
+    .avatar-img {
+      width: 96px;
+      height: 96px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 4px solid #ffffff;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.08);
+      background: #f5f5f4;
+    }
+    .like-btn {
+      background: #fff;
+      border: 1px solid #e7e5e4;
+      border-radius: 12px;
+      padding: 8px 16px;
+      font-size: 14px;
+      font-weight: 600;
+      color: #e11d48;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.2s ease;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+    }
+    .like-btn:hover { background: #fff1f2; border-color: #fecdd3; }
+    .content { padding: 20px 24px 28px; }
+    .name-row { display: flex; align-items: baseline; gap: 8px; margin-bottom: 4px; }
+    .profile-name { font-size: 22px; font-weight: 700; color: #1c1917; }
+    .profile-age { font-size: 18px; color: #78716c; font-weight: 500; }
+    .metadata-line { font-size: 13px; color: #78716c; margin-bottom: 16px; }
+    .bio-text { font-size: 15px; color: #44403c; margin-bottom: 20px; line-height: 1.6; }
+    .quote-box {
+      background: #fafaf9;
+      border-left: 3px solid #f43f5e;
+      padding: 10px 14px;
+      font-size: 13px;
+      color: #57534e;
+      font-style: italic;
+      border-radius: 0 8px 8px 0;
+      margin-bottom: 20px;
+    }
+    .section-title {
+      font-size: 13px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: #a8a29e;
+      margin-bottom: 10px;
+    }
+    .links-grid { display: flex; gap: 10px; margin-top: 20px; }
+    .social-btn {
+      flex: 1;
+      text-align: center;
+      padding: 10px 14px;
+      border-radius: 10px;
+      text-decoration: none;
+      font-size: 13px;
+      font-weight: 600;
+      transition: background 0.15s;
+    }
+    .tg-btn { background: #0284c7; color: #ffffff; }
+    .tg-btn:hover { background: #0369a1; }
+    .ig-btn { background: #e11d48; color: #ffffff; }
+    .ig-btn:hover { background: #be123c; }
+    .msg-section {
+      margin-top: 24px;
+      padding-top: 20px;
+      border-top: 1px solid #f5f5f4;
+    }
+    .msg-input {
+      width: 100%;
+      padding: 10px 12px;
+      border: 1px solid #e7e5e4;
+      border-radius: 8px;
+      font-size: 14px;
+      margin-bottom: 8px;
+      outline: none;
+      font-family: inherit;
+    }
+    .msg-input:focus { border-color: #f43f5e; }
+    .send-btn {
+      width: 100%;
+      background: #1c1917;
+      color: #ffffff;
+      border: none;
+      padding: 10px;
+      border-radius: 8px;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+    .send-btn:hover { background: #292524; }
+    .messages-list { margin-top: 14px; display: flex; flex-direction: column; gap: 8px; }
+    .msg-item {
+      background: #f5f5f4;
+      padding: 8px 12px;
+      border-radius: 8px;
+      font-size: 13px;
+      color: #44403c;
+    }
+    .msg-author { font-weight: 600; color: #1c1917; margin-bottom: 2px; }
+    .footer-note {
+      text-align: center;
+      font-size: 12px;
+      color: #a8a29e;
+      margin-top: 20px;
+    }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <div class="header-banner"></div>
+    <div class="avatar-wrap">
+      <img src="${escapeHtml(profile.avatarUrl)}" alt="${escapeHtml(profile.name)}" class="avatar-img" onerror="this.src='https://ui-avatars.com/api/?name=${encodeURIComponent(profile.name)}&background=fecdd3&color=be123c&size=128'">
+      <button class="like-btn" id="likeBtn" onclick="toggleLike()">
+        <span>❤️</span> <span id="likeCount">${profile.likes}</span>
+      </button>
+    </div>
+    <div class="content">
+      <div class="name-row">
+        <h1 class="profile-name">${escapeHtml(profile.name)}</h1>
+        <span class="profile-age">${profile.age} yosh</span>
+      </div>
+      <div class="metadata-line">
+        ${escapeHtml(profile.city)} · ${escapeHtml(profile.occupation)}
+      </div>
+
+      <p class="bio-text">${escapeHtml(profile.bio)}</p>
+
+      <div class="quote-box">
+        "${escapeHtml(profile.quote)}"
+      </div>
+
+      <div class="section-title">Qiziqishlar</div>
+      <div style="margin-bottom: 20px;">
+        ${interestsHtml}
+      </div>
+
+      <div class="section-title">Bog'lanish</div>
+      <div class="links-grid">
+        ${
+          profile.telegram
+            ? `<a href="https://t.me/${escapeHtml(profile.telegram.replace('@', ''))}" target="_blank" class="social-btn tg-btn">Telegram: @${escapeHtml(profile.telegram.replace('@', ''))}</a>`
+            : ''
+        }
+        ${
+          profile.instagram
+            ? `<a href="https://instagram.com/${escapeHtml(profile.instagram.replace('@', ''))}" target="_blank" class="social-btn ig-btn">Instagram: @${escapeHtml(profile.instagram.replace('@', ''))}</a>`
+            : ''
+        }
+      <div style="margin-top:24px; padding:16px; background:#fef3c7; border:1px solid #fde68a; border-radius:12px;">
+        <div style="font-size:12px; font-weight:700; color:#b45309; text-transform:uppercase; margin-bottom:4px;">
+          🎓 HTML & Dasturlashni o'rganish
+        </div>
+        <div style="font-size:13px; font-weight:600; color:#92400e; margin-bottom:6px;">
+          W3Schools darslariga o'zbek tilida o'tish
+        </div>
+        <p style="font-size:12px; color:#78350f; margin-bottom:12px; line-height:1.4;">
+          Ushbu sahifaning HTML kodini tushunish va HTML → CSS → JS bosqichlarini o'rganish uchun quyidagi darsliklarga kiring:
+        </p>
+        <div style="display:flex; flex-direction:column; gap:6px;">
+          <a href="https://translate.google.com/translate?sl=en&tl=uz&u=https://www.w3schools.com/html/" target="_blank" style="display:block; text-align:center; padding:8px 12px; background:#e34f26; color:#ffffff; font-size:12px; font-weight:600; text-decoration:none; border-radius:8px;">
+            1. HTML O'rganish (W3Schools O'zbekcha) →
+          </a>
+          <a href="https://translate.google.com/translate?sl=en&tl=uz&u=https://www.w3schools.com/css/" target="_blank" style="display:block; text-align:center; padding:8px 12px; background:#1572b6; color:#ffffff; font-size:12px; font-weight:600; text-decoration:none; border-radius:8px;">
+            2. CSS O'rganish (W3Schools O'zbekcha) →
+          </a>
+          <a href="https://translate.google.com/translate?sl=en&tl=uz&u=https://www.w3schools.com/js/" target="_blank" style="display:block; text-align:center; padding:8px 12px; background:#ca8a04; color:#ffffff; font-size:12px; font-weight:600; text-decoration:none; border-radius:8px;">
+            3. JavaScript O'rganish (W3Schools O'zbekcha) →
+          </a>
+        </div>
+      </div>
+
+      <div class="msg-section">
+        <div class="section-title">Salom yo'llash</div>
+        <form onsubmit="handleSendMsg(event)">
+          <input type="text" id="senderName" class="msg-input" placeholder="Ismingiz..." required>
+          <input type="text" id="senderNote" class="msg-input" placeholder="Xabaringizni yozing..." required>
+          <button type="submit" class="send-btn">Xabarni qoldirish</button>
+        </form>
+        <div id="messagesContainer" class="messages-list"></div>
+      </div>
+
+      <div class="footer-note">
+        Ixcham shaxsiy tanishuv sahifasi
+      </div>
+    </div>
+  </div>
+
+  <script>
+    let liked = false;
+    let count = ${profile.likes};
+
+    function toggleLike() {
+      const btn = document.getElementById('likeBtn');
+      const countEl = document.getElementById('likeCount');
+      if (!liked) {
+        liked = true;
+        count += 1;
+        btn.style.background = '#fecdd3';
+        btn.style.borderColor = '#f43f5e';
+      } else {
+        liked = false;
+        count -= 1;
+        btn.style.background = '#ffffff';
+        btn.style.borderColor = '#e7e5e4';
+      }
+      countEl.innerText = count;
+    }
+
+    const messages = [
+      { name: "Suhbatdosh", text: "Salom! Profilingiz samimiy va chiroyli ekan ✨" }
+    ];
+
+    function renderMessages() {
+      const box = document.getElementById('messagesContainer');
+      box.innerHTML = messages.map(m => 
+        '<div class="msg-item"><div class="msg-author">' + escapeStr(m.name) + '</div>' + escapeStr(m.text) + '</div>'
+      ).join('');
+    }
+
+    function handleSendMsg(e) {
+      e.preventDefault();
+      const name = document.getElementById('senderName').value.trim();
+      const note = document.getElementById('senderNote').value.trim();
+      if (!name || !note) return;
+      messages.unshift({ name: name, text: note });
+      renderMessages();
+      document.getElementById('senderName').value = '';
+      document.getElementById('senderNote').value = '';
+    }
+
+    function escapeStr(str) {
+      return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+    }
+
+    renderMessages();
+  </script>
+</body>
+</html>`;
+}
+
+function escapeHtml(text: string): string {
+  if (!text) return '';
+  return text
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#039;');
+}
